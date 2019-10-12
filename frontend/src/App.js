@@ -6,11 +6,13 @@ import {
   Route
 } from "react-router-dom";
 
+import HomePage from './components/HomePage';
+
 function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/home" render={() => console.log('WELCOME')} />
+        <Route path="/home" component={HomePage} />
       </Switch>
     </Router>
   );
