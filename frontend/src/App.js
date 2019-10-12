@@ -9,7 +9,9 @@ import {
 function App() {
   return (
     <Router>
-      <Route path="/home" render={() => console.log('WELCOME')} />
+      <Switch>
+        <Route path="/home" render={() => console.log('WELCOME')} />
+      </Switch>
     </Router>
   );
 }
