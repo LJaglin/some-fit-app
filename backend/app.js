@@ -5,6 +5,8 @@ const app = express();
 const port = 4000;
 const host = 'localhost';
 
+app.use(bodyParser.json());
+
 app.get('/start', (req, res, next) => {
     res.send('It\'s working!');
 });
