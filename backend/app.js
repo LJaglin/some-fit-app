@@ -4,18 +4,16 @@ const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
 
+const Meal = require('./models/meal');
+
 const app = express();
 const port = 4000;
 const host = 'localhost';
 
 //connection config to mongo atlas
-const conConfig = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster-some-fit-app-xify8.mongodb.net/test?retryWrites=true&w=majority`;
-
-//temporary
-const meals = [];
+const conConfig = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster-some-fit-app-xify8.mongodb.net/${process.env.MONGO_DB}?retryWrites=true&w=majority`;
 
 app.use(bodyParser.json());
-
 
 const mySchema = buildSchema(`
     type Meal {
@@ -55,18 +53,25 @@ const root = {
         return meals;
     },
     createMeal: (args) => {
-        const meal = {
-            _id: Math.random().toString(),
+        const meal = new Meal({
             description: args.input.description,
             calorie: args.input.calorie,
             protein: args.input.protein,
             fat: args.input.fat,
             carb: args.input.carb
-        };
+        });
 
-        console.log(meal);
+        return meal
+            .save()
+            .then(result => {
+                console.log(result);
+                return { ...result._doc };
+            })
+            .catch(err => {
+                console.log(err);
+                throw err;
+            });
 
-        meals.push(meal);
         return meal;
     }
 };
