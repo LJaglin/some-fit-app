@@ -2,10 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
+const mongoose = require('mongoose');
 
 const app = express();
 const port = 4000;
 const host = 'localhost';
+
+//connection config to mongo atlas
+const conConfig = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@cluster-some-fit-app-xify8.mongodb.net/test?retryWrites=true&w=majority`;
 
 //temporary
 const meals = [];
@@ -76,6 +80,14 @@ app.use('/graphql', graphqlHTTP({
     graphiql: true,
 }));
 
-app.listen(port, host, () => {
-    console.log(`Server is running on port: ${port}, and hostname: ${host}`);
-});
+
+mongoose.connect(conConfig)
+    .then(() => {
+        app.listen(port, host, () => {
+            console.log(`Server is running on port: ${port}, and hostname: ${host}`);
+        });
+    }).catch(err => {
+        console.log(err)
+    });
+
+
