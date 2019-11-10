@@ -7,16 +7,36 @@ const app = express();
 const port = 4000;
 const host = 'localhost';
 
+//temporary
+const meals = [];
+
 app.use(bodyParser.json());
 
 
 const mySchema = buildSchema(`
+    type Meal {
+        _id: ID!
+        description: String!
+        calorie: Float!
+        protein: Float!
+        fat: Float!
+        carb: Float!
+    }
+
+    input MealInput {
+        description: String!
+        calorie: Float!
+        protein: Float!
+        fat: Float!
+        carb: Float!
+    }
+
     type RootQuery {
-        meals: [String!]!
+        meals: [Meal!]!
     }
 
     type RootMutation {
-        createMeal(name: String): String
+        createMeal(input: MealInput): Meal
     }
 
     schema {
@@ -28,11 +48,22 @@ const mySchema = buildSchema(`
 
 const root = {
     meals: () => {
-        return ['Breakfast', 'Dinner', 'Supper'];
+        return meals;
     },
     createMeal: (args) => {
-        const mealName = args.name;
-        return mealName;
+        const meal = {
+            _id: Math.random().toString(),
+            description: args.input.description,
+            calorie: args.input.calorie,
+            protein: args.input.protein,
+            fat: args.input.fat,
+            carb: args.input.carb
+        };
+
+        console.log(meal);
+
+        meals.push(meal);
+        return meal;
     }
 };
 
@@ -43,7 +74,7 @@ app.use('/graphql', graphqlHTTP({
     schema: mySchema,
     rootValue: root,
     graphiql: true,
-  }));
+}));
 
 app.listen(port, host, () => {
     console.log(`Server is running on port: ${port}, and hostname: ${host}`);
