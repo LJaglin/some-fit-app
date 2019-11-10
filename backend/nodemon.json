@@ -1,6 +1,7 @@
 {
     "env": {
         "MONGO_USER": "jaglin",
-        "MONGO_PASSWORD": "IMSLFqk4wpAfUSqI"
+        "MONGO_PASSWORD": "IMSLFqk4wpAfUSqI",
+        "MONGO_DB": "some-fit-app"
     }
 }
