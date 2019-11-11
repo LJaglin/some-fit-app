@@ -22,6 +22,10 @@ const mealSchema = new Schema({
     carb : {
         type: Number,
         required: true
+    },
+    creator: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 });
 
