@@ -50,7 +50,16 @@ const mySchema = buildSchema(`
 
 const root = {
     meals: () => {
-        return meals;
+        return Meal
+                .find()
+                .then(meals => {
+                    return meals.map(meal => {
+                        return { ...meal._doc}
+                    });
+                })
+                .catch(err => {
+                    throw err;
+                });
     },
     createMeal: (args) => {
         const meal = new Meal({
