@@ -5,6 +5,7 @@ const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
 
 const Meal = require('./models/meal');
+const User = require('./models/user');
 
 const app = express();
 const port = 4000;
@@ -25,6 +26,12 @@ const mySchema = buildSchema(`
         carb: Float!
     }
 
+    type User {
+        _id: ID!
+        email: String!
+        password: String
+    }
+
     input MealInput {
         description: String!
         calorie: Float!
@@ -33,12 +40,18 @@ const mySchema = buildSchema(`
         carb: Float!
     }
 
+    input UserInput {
+        email: String!
+        password: String!
+    }
+
     type RootQuery {
         meals: [Meal!]!
     }
 
     type RootMutation {
         createMeal(input: MealInput): Meal
+        createUser(input: UserInput): User
     }
 
     schema {
