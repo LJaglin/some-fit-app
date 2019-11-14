@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const graphqlHTTP = require('express-graphql');
 const { buildSchema } = require('graphql');
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const Meal = require('./models/meal');
 const User = require('./models/user');
@@ -64,15 +65,15 @@ const mySchema = buildSchema(`
 const root = {
     meals: () => {
         return Meal
-                .find()
-                .then(meals => {
-                    return meals.map(meal => {
-                        return { ...meal._doc}
-                    });
-                })
-                .catch(err => {
-                    throw err;
+            .find()
+            .then(meals => {
+                return meals.map(meal => {
+                    return { ...meal._doc }
                 });
+            })
+            .catch(err => {
+                throw err;
+            });
     },
     createMeal: (args) => {
         const meal = new Meal({
@@ -95,6 +96,28 @@ const root = {
             });
 
         return meal;
+    },
+    createUser: (args) => {
+        return User.findOne({email: args.input.email}).then(user => {
+            if (user) {
+                throw new Error('User exists already.');
+            }
+            return bcrypt.hash(args.input.password, 12);
+        })
+        .then(hashedPassword => {
+            const user = new User({
+                email: args.input.email,
+                password: hashedPassword
+            });
+            return user.save();
+        })
+        .then(result => {
+            return { ...result._doc, password: null };
+        })
+        .catch(err => {
+            throw err;
+        });
+
     }
 };
 
